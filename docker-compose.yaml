@@ -1,0 +1,33 @@
+version: '3'
+
+services:
+  biology_app:
+    container_name: biology_app
+    build:
+      context: .
+      dockerfile: ./Dockerfile
+    command: uvicorn main:biology_app --reload --workers 1 --host 0.0.0.0 --port 8000
+    environment:
+      BG_DATABASE_URL: postgresql://user:user@pg/biology_app
+    volumes:
+      - .:/biology_app
+    ports:
+      - 8000:8000
+    depends_on:
+      - pg
+
+  pg:
+    image: postgres
+    container_name: pg
+    volumes:
+      - data:/var/lib/postgresql/data
+    ports:
+      - 5432:5432
+    environment:
+      POSTGRES_USER: user
+      POSTGRES_PASSWORD: user
+      POSTGRES_DB: biology_app
+
+volumes:
+  data:
+
